@@ -1,13 +1,13 @@
 {% extends 'base.html' %}
 
-{% block title %}My Todos{% endblock %}
+{% block title %}Your day, in order.{% endblock %}
 
 {% block content %}
 <div class="row">
     <div class="col-md-12">
-        <h1 class="mb-4">My Todos</h1>
+        <h1 class="mb-4">Your day, in order.</h1><p class="text-muted">Focus on what matters. Open tasks come first, from high to low priority.</p>
         <a href="{% url 'todo_create' %}" class="btn btn-primary mb-3">
-            <i class="fas fa-plus"></i> Add New Todo
+            <i class="fas fa-plus"></i> Add a task
         </a>
 
         {% if todos %}
@@ -18,7 +18,7 @@
                             <div class="d-flex align-items-center">
                                 <form method="POST" action="{% url 'todo_toggle_complete' todo.pk %}" class="me-3">
                                     {% csrf_token %}
-                                    <button type="submit" class="btn btn-link p-0">
+                                    <button type="submit" class="btn btn-link p-0" aria-label="Toggle completion for {{ todo.title }}">
                                         <i class="fas fa-{% if todo.completed %}check-square{% else %}square{% endif %} fa-lg"></i>
                                     </button>
                                 </form>
@@ -37,12 +37,12 @@
                                     </small>
                                 </div>
                             </div>
-                            <div class="btn-group">
+                            <div class="task-actions">
                                 <a href="{% url 'todo_detail' todo.pk %}" class="btn btn-sm btn-outline-primary">
-                                    <i class="fas fa-edit"></i>
+                                    Edit
                                 </a>
                                 <a href="{% url 'todo_delete' todo.pk %}" class="btn btn-sm btn-outline-danger">
-                                    <i class="fas fa-trash"></i>
+                                    Delete
                                 </a>
                             </div>
                         </div>

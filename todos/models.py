@@ -1,7 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import User
 
+class TodoQuerySet(models.QuerySet):
+    def by_priority(self):
+        return self.order_by("completed", models.Case(
+            models.When(priority="high", then=models.Value(0)),
+            models.When(priority="medium", then=models.Value(1)),
+            default=models.Value(2), output_field=models.IntegerField()),
+            models.F("due_date").asc(nulls_last=True), "pk")
+
 class Todo(models.Model):
+    objects = TodoQuerySet.as_manager()
     title = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     created_date = models.DateTimeField(auto_now_add=True)

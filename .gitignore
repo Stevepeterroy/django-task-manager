@@ -31,3 +31,4 @@ data/
 *.pkl
 *.joblib
 *.npy
+*.sqlite3-*

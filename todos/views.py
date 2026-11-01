@@ -9,7 +9,7 @@ from .forms import TodoForm
 
 @login_required
 def todo_list(request):
-    todos = Todo.objects.filter(user=request.user)
+    todos = Todo.objects.filter(user=request.user).by_priority()
     return render(request, 'todos/todo_list.html', {'todos': todos})
 
 @login_required

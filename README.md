@@ -25,3 +25,7 @@ Task queries are scoped to the authenticated owner. Completion toggles require C
 ```
 
 Tests cover sign-in requirements, cross-user read/mutation isolation, private task lists and the POST requirement. This repository contains no real accounts or task database. A production deployment still needs HTTPS, secure cookie settings, static-file serving and an appropriate host configuration.
+
+## Interface and ordering update
+
+Daybook now uses an updated responsive interface, clear edit/delete controls, and high → medium → low priority ordering for the task list, with completed items last. Regression tests also cover priority order, create/edit/delete and invalid input.

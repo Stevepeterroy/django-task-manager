@@ -35,3 +35,28 @@ class TaskAccessTests(TestCase):
         response = self.client.get(reverse("todo_list"))
         self.assertEqual(response.status_code, 200)
         self.assertNotContains(response, "Private task")
+
+class TaskWorkflowTests(TestCase):
+    def setUp(self):
+        self.user = get_user_model().objects.create_user(username="workflow")
+        self.client.force_login(self.user)
+    def test_priority_order(self):
+        from datetime import date
+        for priority in ["low", "high", "medium"]:
+            Todo.objects.create(user=self.user, title=priority, priority=priority)
+        Todo.objects.create(user=self.user, title="done", priority="high", completed=True)
+        response = self.client.get(reverse("todo_list"))
+        self.assertEqual([t.title for t in response.context["todos"]], ["high","medium","low","done"])
+    def test_create_edit_delete_and_invalid_input(self):
+        response=self.client.post(reverse("todo_create"), {"title":"", "priority":"invalid"})
+        self.assertEqual(response.status_code,200)
+        self.assertEqual(Todo.objects.count(),0)
+        self.assertEqual(self.client.post(reverse("todo_create"), {"title":"First", "priority":"high"}).status_code,302)
+        task=Todo.objects.get()
+        self.assertEqual(task.user,self.user)
+        self.assertEqual(self.client.post(reverse("todo_detail",args=[task.pk]), {"title":"Updated", "priority":"low"}).status_code,302)
+        task.refresh_from_db(); self.assertEqual(task.title,"Updated")
+        self.assertEqual(self.client.get(reverse("todo_delete",args=[task.pk])).status_code,200)
+        self.assertTrue(Todo.objects.filter(pk=task.pk).exists())
+        self.client.post(reverse("todo_delete",args=[task.pk]))
+        self.assertFalse(Todo.objects.exists())
